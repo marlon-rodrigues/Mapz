@@ -1,0 +1,360 @@
+/**
+ * Plugin Name: Ungerboeck Calendar Integration Plug-in
+ * Plugin URI: http://digital.ungerboeck.com/work/all-work
+ * Description: This plug-in allows the calendar integration with Ungerboeck software.
+ * Version: 1.0.0
+ * Author: Marlon Rodrigues
+ * Author URI: http://digital.ungerboeck.com/about/our-team
+ * License: Ungerboeck Software International - Copyright 2016
+ */
+ 
+jQuery(document).ready(function(){  
+		//for IE and cross domain calls
+	jQuery.support.cors = true;
+
+	var webServicePath = "http://digitaldemo.ungerboeck.com/Digital_Services/MAP/Spaces.aspx";
+	var bookingURL = '' //comes from XML file
+
+	buildMap();
+	
+		//build the map 
+	function buildMap() {	
+			//holds map configurations
+		var mapConfigs = [];	
+			//map array/object - contains all the map info, including categories, levels and spaces
+		var mapArray = [];
+		var mapObject = {};
+			//levels array - contains all the levels info, including spaces
+		var levels = [];
+			//categories array - contains all the categories info
+		var categories = [];	
+
+			//get XML config file contents
+		jQuery.get('mapz.xml', function(d){
+			
+			jQuery(d).find('map').each(function(){
+				var currMap = jQuery(this);
+				
+					//pull info only for the selected map
+				if(currMap.find('id').first().text() == mapzID) {
+						//get booking info
+					bookingURL = currMap.find('bookingURL').text();
+
+						//get the map info
+					mapObject.mapwidth = currMap.find('mapwidth').text();
+					mapObject.mapheight = currMap.find('mapheight').text();
+					
+					mapConfigs['showcoords'] = currMap.find('showcoords').text().toLowerCase();
+					mapConfigs['minimap'] = currMap.find('minimap').text().toLowerCase();
+					mapConfigs['sidebar'] = currMap.find('sidebar').text().toLowerCase();
+					mapConfigs['zoombuttons'] = currMap.find('zoombuttons').text().toLowerCase();
+					mapConfigs['maxscale'] = currMap.find('maxscale').text();
+					
+						//get map categories
+					var wscategories = getMapCategories();						 
+						
+						//loop through categories and create categories object
+					for (var i = 0; i < wscategories.length; i++) {
+						var categoriesInfo = {};		
+						categoriesInfo.id = wscategories[i]['id'];
+						categoriesInfo.title = wscategories[i]['title'];
+						
+						//if color is valid hex uses it, otherwise assings a random hex
+						var validColor  = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(wscategories[i]['color']); 
+						//categoriesInfo.color = (validColor) ? wscategories[i]['color'] : '#'+(Math.random()*0xFFFFFF<<0).toString(16);
+						categoriesInfo.color = (validColor) ? wscategories[i]['color'] : randomColor();
+						//categoriesInfo.show = wscategories[i]['show'];
+						categoriesInfo.show = "false";
+						
+						categories.push(categoriesInfo);
+					}
+					
+					mapObject.categories = categories;
+					
+						//loop through available levels on XML
+					currMap.find('level').each(function(){
+						var level = jQuery(this); 
+						
+						var levelInfo = {};	
+						levelInfo.id = level.find('id').text();
+						levelInfo.name = level.find('name').text();
+						levelInfo.title = level.find('title').text();
+						levelInfo.map = level.find('mapimage').text();
+						levelInfo.minimap = level.find('minimapimage').text();
+						levelInfo.locations = []; //each level location is an array
+						
+						var wsspaces = getMapSpaces(level.find('name').text());
+						
+							//loop through spaces
+						for (var i = 0; i < wsspaces.length; i++) {
+							var spaceInfo = {};
+							spaceInfo.id = wsspaces[i]['id'];
+							spaceInfo.title = wsspaces[i]['title'];
+							spaceInfo.description = wsspaces[i]['description'];
+							spaceInfo.about = wsspaces[i]['about'];
+							spaceInfo.category = wsspaces[i]['category'];
+							spaceInfo.link = wsspaces[i]['link'];
+							spaceInfo.x = wsspaces[i]['x'];
+							spaceInfo.y = wsspaces[i]['y'];
+							//spaceInfo.zoom = wsspaces[i]['z'];
+							spaceInfo.zoom = "0";
+							
+							levelInfo.locations.push(spaceInfo);
+						}
+						
+						levels.push(levelInfo);
+					});
+					
+					mapObject.levels = levels;
+					
+					//console.log(mapObject);
+					
+						//convert object to JSON
+					var jsonMap = JSON.stringify(mapObject);
+				
+					createContent(jsonMap, mapConfigs);
+				}
+			});
+		});
+	}
+	
+		//get all available map categories
+    function getMapCategories() { 
+		var categories = [];
+		
+        jQuery.ajax({
+			async: false,
+            url: webServicePath,
+			crossDomain: true,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                FunctionName: 'getAllCategories'
+            },
+            success: function (data) { 
+                categories = data;
+            }, error: function(xhr, status, error) {
+				alert(status);
+				alert(error);
+				var err = eval("(" + xhr.responseText + ")");
+				alert(err);
+				//alert(err.Message);
+			}
+        });
+		
+		return categories;
+    }
+	
+		//get all available map spaces by level
+    function getMapSpaces(filterLevel) { 
+		var spaces = [];
+		
+        jQuery.ajax({
+			async: false,
+            url: webServicePath,
+			crossDomain: true,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                FunctionName: 'getAllSpaces',
+				SpaceLevel: filterLevel
+            },
+            success: function (data) { 
+                spaces = data;
+            }
+        });
+		
+		return spaces;
+    }
+	
+		//get all space documents
+    function getSpaceDocs(filterSpace) { 		
+        jQuery.ajax({
+			//async: false,
+            url: webServicePath,
+			crossDomain: true,
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                FunctionName: 'getSpaceDocs',
+				SpaceID: filterSpace
+            },
+            success: function (data) { 
+				buildDocs(data);
+            }
+        });
+    }
+	
+	function createContent(jsonMap, mapConfigs){
+		//console.log(jsonMap);
+		
+			//set default values for map options
+		var showcoords = false;
+		var minimap = false;
+		var sidebar = false;
+		var zoombuttons = false;
+		var maxscale = 2; 
+		
+		if(typeof mapConfigs['showcoords'] != 'undefined' && mapConfigs['showcoords'] == 'yes') {
+			showcoords = true;
+		} 
+		if(typeof mapConfigs['minimap'] != 'undefined' && mapConfigs['minimap'] == 'yes') {
+			minimap = true;
+		} 
+		if(typeof mapConfigs['sidebar'] != 'undefined' && mapConfigs['sidebar'] == 'yes') {
+			sidebar = true;
+		} 
+		if(typeof mapConfigs['zoombuttons'] != 'undefined' && mapConfigs['zoombuttons'] == 'yes') {
+			zoombuttons = true;
+		} 
+		if(typeof mapConfigs['maxscale'] != 'undefined') {
+			maxscale = mapConfigs['maxscale'];
+		} 
+		
+			//create map
+		jQuery('#mapplic').mapplic({
+			source: jQuery.parseJSON(jsonMap),
+			height: 400,
+			animate: false,
+			mapfill: true,
+			sidebar: sidebar,
+			minimap: minimap,
+			deeplinking: false,
+			fullscreen: true,
+			hovertip: true,
+			developer: showcoords,
+			zoombuttons: zoombuttons,
+			maxscale: maxscale
+		});
+
+		jQuery('.usage').click(function(e) {
+			e.preventDefault();
+				
+			jQuery('.editor-window').slideToggle(200);
+		});
+
+		jQuery('.editor-window .window-mockup').click(function() {
+			jQuery('.editor-window').slideUp(200);
+		});
+		
+			//override the pin click 
+		jQuery('.mapplic-pin').click(function(e){
+			closeInfoWindow();	
+			buildLocationMedia(jQuery(this).attr('data-location'));
+		});
+		
+			//override the category list click 
+		jQuery('.mapplic-list-location.mapplic-list-shown').click(function(){
+			closeInfoWindow();			
+			buildLocationMedia(jQuery(this).attr('data-location'));
+		});
+		
+			//hover for map pin 
+		jQuery('.mapplic-pin').hover(
+			function(){
+				jQuery('.mapplic-tooltip.mapplic-hovertip').css('cssText', 'display: block !important');
+			}, function() {
+				jQuery('.mapplic-tooltip.mapplic-hovertip').css('cssText', 'display: none !important');
+			}
+		);
+	}
+	
+	function buildLocationMedia(location){		
+			//get css from standar popup
+		var tooltipLeft = jQuery('.mapplic-tooltip').css('left');
+		var tooltipTop = jQuery('.mapplic-tooltip').css('top');
+		var tooltipMarginTop = jQuery('.mapplic-tooltip').css('margin-top');
+		var tooltipMarginLeft = jQuery('.mapplic-tooltip').css('margin-left');
+		
+			//build the custom popup box
+		var htmlString = '';
+		htmlString += '<div class="mapz-tooltip ' + location + '" style="left:' + tooltipLeft + '; top:' + tooltipTop + '; margin-top:' + tooltipMarginTop + '; margin-left:' + tooltipMarginLeft + ';">';
+		htmlString += '<div class="space-close-window">X</div>';
+		htmlString += '<div class="spaceInfo"></div>';
+		htmlString += '<div class="docPDFs"><ul></ul></div>';
+		htmlString += '<div class="docImages"></div>';
+		htmlString += '</div>';
+		
+		jQuery('.map-container').append(htmlString);
+		
+			//get values froms standard popup
+		var spaceTitle = jQuery('.mapplic-tooltip-title').text();
+		var spaceDescription = jQuery('.mapplic-tooltip-description').text();
+		var spaceLink = '';
+		
+		if(jQuery('.mapplic-tooltip-link').css('display') != 'none') {
+			spaceLink = jQuery('.mapplic-tooltip-link').attr('href');
+		}
+			
+		jQuery('.mapz-tooltip .spaceInfo').append('<h4>' + spaceTitle + '</h4>');
+		jQuery('.mapz-tooltip .spaceInfo').append('<div class="spaceContent">' + spaceDescription + '</div>');
+		jQuery('.mapz-tooltip .spaceInfo').append('<image src="mapz/images/ajax-loader.gif" class="mapz-spinner">');
+		
+			//get docs 
+		getSpaceDocs(location);
+			
+			//add link button
+		if(spaceLink != '') {
+			jQuery('.mapz-tooltip').append('<div class="spaceButtons"><a href="' + spaceLink + '" target="_blank">More</a></div>');	
+		}
+		
+			//add book button
+		jQuery('.mapz-tooltip').append('<div class="spaceButtons bookButton"><a href="' + bookingURL + '?SpaceID=' + location + '" target="_blank">Book</a></div>');	
+			
+			//for images
+		jQuery('.fancybox').fancybox({
+			openEffect	: 'none',
+			closeEffect	: 'none'
+		});
+			
+			//add close button
+		jQuery('.mapz-tooltip .space-close-window').click(function(){
+			closeInfoWindow();
+		});
+	}
+	
+	function buildDocs(docs) {
+		for(var i = 0; i < docs.length; i++){
+				//check the file type
+			var fileType = ((docs[i]['file_name']).substr(((docs[i]['file_name']).lastIndexOf('.') +1))).toLowerCase();
+			
+				//build image 
+			if (fileType == 'jpg' || fileType == 'png' || fileType == 'gif' || fileType == 'jpeg' || fileType == 'bmp') {
+				var image = new Image();
+				var imgSource = 'data:image/' + fileType + ';base64,' + docs[i]['doc_data'];
+				image.src = imgSource;
+				jQuery('.mapz-tooltip .docImages').append('<a class="fancybox set' + i + '" rel="' + location + '" href="' + imgSource + '" title="' + docs[i]['description'] + '"></a>');
+				jQuery('.mapz-tooltip .fancybox.set' + i).append(image);
+			} else { //build all other types
+				var docSource = 'data:application/' + fileType + ';base64,' + docs[i]['doc_data'];					
+				var htmlDownload = '<li><a class="fancyboxFrame set' + i + '" href="' + docSource + '" data-fancybox-type="iframe" target="_blank" ';
+					//allow pdf documents to be opened in the browser
+				if (fileType != 'pdf') {
+					htmlDownload += 'download="' + docs[i]['description'] + '.' + fileType + '"';
+				}
+				htmlDownload += '>' + docs[i]['description'] + '</a></li>';
+				jQuery('.mapz-tooltip .docPDFs ul').append(htmlDownload);
+			}
+		}
+		
+		jQuery('.mapz-spinner').hide();
+	}
+	
+	function closeInfoWindow() {
+			//destroy the mapztooltip object
+		jQuery('.mapz-tooltip').fadeOut();
+		jQuery('.mapz-tooltip').remove();
+	}
+	
+	function randomColor(){
+		r = Math.floor(Math.random() * (100))+100;
+		g = Math.floor(Math.random() * (100))+100;
+		b = Math.floor(Math.random() * (100))+100;
+		return('#'+componentToHex(r)+''+componentToHex(g)+''+componentToHex(b)+'');
+	}
+	
+	function componentToHex(c) {
+		var hex = c.toString(16);
+		return hex.length == 1 ? "0" + hex : hex;
+	}
+});

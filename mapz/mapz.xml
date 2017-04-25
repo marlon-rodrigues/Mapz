@@ -1,0 +1,49 @@
+<?xml version='1.0' ?>
+<mapz>
+	<map>
+		<id>map1</id>
+		<showcoords>no</showcoords>
+		<minimap>yes</minimap>
+		<sidebar>yes</sidebar>
+		<zoombuttons>yes</zoombuttons>
+		<maxscale>5</maxscale>
+		<mapwidth>13320</mapwidth>
+		<mapheight>3600</mapheight>
+		<mapzoom>6</mapzoom>
+		<level>
+			<id>Level1</id>
+			<name>Level One: Public Spaces</name>
+			<title>Level One: Public Spaces</title>
+			<mapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</mapimage>
+			<minimapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</minimapimage>
+			<default>yes</default>
+		</level>
+		<level>
+			<id>Level2</id> 
+			<name>Level Two: Private Spaces</name>
+			<title>Level Two: Private Spaces</title>
+			<mapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</mapimage>
+			<minimapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</minimapimage>
+			<default>no</default>
+		</level>
+	</map>
+	<map>
+		<id>map2</id>
+		<showcoords>yes</showcoords>
+		<minimap>yes</minimap>
+		<sidebar>yes</sidebar>
+		<zoombuttons>yes</zoombuttons>
+		<maxscale>5</maxscale>
+		<mapwidth>13320</mapwidth>
+		<mapheight>3600</mapheight>
+		<mapzoom>6</mapzoom>
+		<level>
+			<id>Level2</id> 
+			<name>Level Two: Private Spaces</name>
+			<title>Level Two: Private Spaces</title>
+			<mapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</mapimage>
+			<minimapimage>http://localhost/mapz/mapz/images/maps/towergrove.svg</minimapimage>
+			<default>yes</default>
+		</level>
+	</map>
+</mapz>

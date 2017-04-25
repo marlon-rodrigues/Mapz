@@ -1,0 +1,270 @@
+.map-container {
+	font-family: 'Oswald', sans-serif;
+}
+.map-container a {
+	font-family: 'Lato', sans-serif;
+	font-weight: bold;
+}
+.mapplic-sidebar { background: #ADD064; }
+.mapplic-search-input { border: 1px solid #4F351F; }
+.mapplic-list { position: relative; }
+.mapplic-tooltip img, .mapplic-list-thumbnail { width: 50px; margin: 0 15px 0 0; float: left; border: 1px solid #4F351F}
+.mapplic-list-location > a { border-left: 3px solid transparent; }
+.mapplic-list-location > a:hover { border-left: 3px solid #18824B; transparent; background: #D6E7B1; }
+.mapplic-tooltip-description p { float: left; width: 200px; }
+.mapplic-tooltip-description p:first-child { width: auto; }
+
+/* Never shows standard mapplic-tooltip */
+.mapplic-tooltip { display: none !important;} 
+.mapplic-search-form {
+	padding: 0em;
+	border: none;
+	border-radius: 0px;
+	border-bottom: 7px solid #000;
+}
+.mapplic-search-form input {
+	border: none;
+	border-radius: 0px;
+	background-color: #f3f3f5;
+	background-position: center right 15px;
+	padding: 1em;
+}
+.mapplic-list-container {
+	padding-top: 43px;
+}
+.mapplic-list-category > a {
+	text-transform: uppercase;
+	font-size: 15px;
+}
+.mapplic-levels .mapplic-levels-select {
+	font-family: font-family: 'Lato', sans-serif;
+	font-weight: bold;
+	color: #80c1e9;
+}
+.mapplic-list-location h4 {
+	font-family: 'Oswald', sans-serif;
+	margin: 0px;
+}
+.mapz-tooltip {
+	position:absolute;
+	/*top:50%;
+	left:50%;
+	background-color:white;*/
+	z-index:1002;
+	overflow:none;
+	width:350px;
+	height:auto;
+	/*margin-left:-155px;
+	margin-top:-155px;*/
+	margin-left: 2em !important;
+	border-radius: 0px;
+	padding: 0em;
+	font-size: 15px;
+}
+.mapz-spinner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+}
+.mapz-tooltip .space-close-window {
+	float: right;
+	margin-bottom: -0.5em;
+	color: #aaa;
+}
+.mapz-tooltip .space-close-window:hover {
+	color: #000;
+	cursor: pointer;
+}
+.mapz-tooltip .spaceInfo {
+	clear: both;
+	text-align: center;
+}
+.mapz-tooltip .spaceInfo h4, .mapz-tooltip .docPDFs h4 {
+	color: #333;
+    font-size: 17px;
+    text-align: left;
+	font-weight: lighter;
+	margin: 0em;
+	text-transform: uppercase;
+}
+.mapz-tooltip .spaceInfo .spaceContent {
+    color: #000;
+    font-size: 14px;
+    line-height: 20px;
+	margin-bottom: 1em;
+	text-align: left;
+	font-family: 'Lato', sans-serif;
+	font-weight: lighter;
+}
+.mapz-tooltip .spaceButtons  {
+	/*float: right;
+	margin-top: 1em;*/
+	display: inline-block;
+	width: 31.5%;
+	box-sizing: border-box;
+	border-radius: 0px;
+	margin-right: 0.5em;
+	background: #da4f44;
+	text-align: center;
+	text-transform: uppercase;
+	height: 1.7em;
+}
+.mapz-tooltip .spaceButtons:last-child {
+	margin-right: 0em;
+}
+.mapz-tooltip .spaceButtons a {
+    color: #fff !important;
+	font-size: 14px;
+    text-decoration: none;
+	font-family: 'Oswald', sans-serif;
+	font-weight: normal;
+}
+.mapz-tooltip .spaceButtons.bookButton {
+	background: #0f75bd;
+}
+.mapz-tooltip .spaceButtons.closeButton {
+	background: #ccc;
+}
+.mapz-tooltip .spaceButtons:hover {
+	background-color: #888;
+	cursor: pointer;
+}
+.mapz-tooltip .docPDFs {
+	margin-bottom: 1em;
+	overflow: hidden;
+	clear: both;
+}
+.mapz-tooltip .docPDFs ul {
+	margin: 0em;
+	padding: 0em;
+	list-style: none;
+}
+.mapz-tooltip .docPDFs ul li {
+	width: 50%;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: bold;
+    box-sizing: border-box;
+}
+.mapz-tooltip .docPDFs a{
+	color: #24aadf;
+    font-size: 14px;
+	text-decoration: none;
+}
+.mapz-tooltip .docPDFs a:hover {
+	color: #80c1e9;
+}
+.mapz-tooltip .docPDFs a object {
+	height: 1em;
+}
+.mapz-tooltip .docPDFs a object embed {
+	display: none;
+}
+.mapz-tooltip .docImages {
+	background: #ffffff;
+}
+.mapz-tooltip .docImages .fancybox img {
+	width: 100%;
+	max-height: 10em;
+}
+.mapz-tooltip .docImages a {
+	box-sizing: border-box;
+    width: 100%;
+    display: inline-block;
+	position: relative;
+}
+.mapz-tooltip .docImages a i {
+	position: absolute;
+	top: 50%;
+	right: 0.5em;
+	color: #ffffff;
+	border: 2px solid #ffffff;
+	border-radius: 50%;
+	padding: 0.1em 0.4em;
+	font-size: 1.3em;
+}
+.mapz-tooltip a.imageNoShow {
+	display: none;
+}
+.mapz-tooltip .docImages .viewAllContainer {
+	width: 100%;
+}
+.mapz-tooltip .docImages a.viewAllLink {
+	color: #6CB5F4;
+	font-size: 0.8em;
+	float: right;
+	margin-right: -1em;
+	margin-top: 0.5em;
+}
+.mapz-tooltip .spaceContainer {
+	padding: 0.5em 1em 1em;
+	background: #ffffff;
+}
+.mapz-tooltip .spaceButtonsContainer {
+	background: rgba(255, 255, 255, 0.5);
+	padding: 1em;
+}
+.clear {
+	clear: both;
+	line-height: 0em;
+}
+.containerPointer {
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid #ffffff;
+    position: absolute;
+    top: 12%;
+    z-index: 999999;
+    left: -2.9%;
+}
+@media (max-width: 1024px) and (min-width: 768px) {
+	.mapz-tooltip {
+		width: 250px;
+	}
+	.mapz-tooltip .docImages a {
+		width: 100%;
+	}
+	.mapz-tooltip .fancybox img {
+		width: 100%
+	}
+}		
+@media (max-width: 767px) { 
+	.mapz-tooltip {
+		width: 150px;
+	}
+	.mapz-tooltip .spaceInfo h4 {
+		font-size: 15px;
+	}
+	.mapz-tooltip .spaceInfo .spaceContent {
+		font-size: 12px;
+	}
+	.mapz-tooltip .docPDFs a {
+		font-size: 12px;
+	}
+	.mapz-tooltip  .fancybox img {
+		width: 100%;
+	}
+	.mapz-tooltip .spaceButtons a {
+		font-size: 12px;
+	}
+	.mapz-tooltip .spaceButtons {
+		width: 100%;
+		margin-bottom: 0.5em;
+	}
+	.mapz-tooltip .docPDFs ul li {
+		width: 100%;
+		margin-bottom: 0.4em;
+	}
+	.mapz-tooltip .docImages a i {
+		top: 40%;
+	}
+}
+@media (min-width:667px){
+	#mapplic { height: 100vh !important; }
+	.mapplic-sidebar { border: 1px solid #4F351F; position: absolute; width: 220px; background: rgba(173,208,100,.9); top: 200px; left: 10px; height: auto !important;}
+	.mapplic-container { width: 100%;  height: 100% !important; }
+	.mapplic-zoom-buttons { left: 40px; bottom: 0; width: 80px; }
+	.mapplic-zoom-buttons a { float: left; margin-right: 10px; }
+}
